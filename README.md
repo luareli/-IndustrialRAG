@@ -23,30 +23,25 @@ El sistema está diseñado para responder consultas técnicas como:
 
 ## 🏗️ Arquitectura
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    IndustrialKnowledgeAgent                     │
-├─────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌───────────┐ │
-│  │    RAGAgent      │    │ DatabaseQueryAgent│    │   User    │ │
-│  │  (Chroma + PDFs)  │    │   (SQLite)       │    │  Query    │ │
-│  └─────────┬────────┘    └─────────┬────────┘    └──────┬────┘ │
-│            │                        │                     │       │
-│            ▼                        ▼                     ▼       │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │               WorkflowOrchestrator                         │  │
-│  │   - Detecta tipo de consulta (documentación vs DB)         │  │
-│  │   - Combina respuestas de ambos agentes                   │  │
-│  │   - Genera respuesta final unificada                     │  │
-│  └───────────────────────────────────────────────────────┘  │
-│            │                                           │          │
-│            ▼                                           ▼          │
-│  ┌─────────────────┐                         ┌────────────┐  │
-│  │   Chroma DB      │                         │  SQLite DB  │  │
-│  │  (Vector Store)  │                         │ (Structured)│  │
-│  └─────────────────┘                         └────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph IndustrialKnowledgeAgent["IndustrialKnowledgeAgent"]
+        direction TB
+        User((User)) -->|Query| Orchestrator
+        RAG[RAGAgent\n(Chroma + PDFs)] --> Orchestrator
+        DB[DatabaseQueryAgent\n(SQLite)] --> Orchestrator
+
+        Orchestrator[WorkflowOrchestrator] -->|Vector Search| ChromaDB[(Chroma DB\nVector Store)]
+        Orchestrator -->|SQL Queries| SQLiteDB[(SQLite DB\nStructured)]
+    end
+
+    style IndustrialKnowledgeAgent fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
+    style Orchestrator fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    style RAG fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    style DB fill:#ffebee,stroke:#f44336,stroke-width:2px
+    style ChromaDB fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style SQLiteDB fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style User fill:#ffffff,stroke:#6c757d,stroke-width:2px
 ```
 
 ### Componentes
