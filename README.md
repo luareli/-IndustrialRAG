@@ -28,11 +28,11 @@ graph TD
     subgraph IndustrialKnowledgeAgent["IndustrialKnowledgeAgent"]
         direction TB
         User((User)) -->|Query| Orchestrator
-        RAG[RAGAgent\n(Chroma + PDFs)] --> Orchestrator
-        DB[DatabaseQueryAgent\n(SQLite)] --> Orchestrator
+        RAG["RAGAgent (Chroma + PDFs)"] --> Orchestrator
+        DB["DatabaseQueryAgent (SQLite)"] --> Orchestrator
 
-        Orchestrator[WorkflowOrchestrator] -->|Vector Search| ChromaDB[(Chroma DB\nVector Store)]
-        Orchestrator -->|SQL Queries| SQLiteDB[(SQLite DB\nStructured)]
+        Orchestrator["WorkflowOrchestrator"] -->|Vector Search| ChromaDB[("Chroma DB Vector Store")]
+        Orchestrator -->|SQL Queries| SQLiteDB[("SQLite DB Structured")]
     end
 
     style IndustrialKnowledgeAgent fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
