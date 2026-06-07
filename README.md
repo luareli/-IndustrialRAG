@@ -23,10 +23,13 @@ El sistema está diseñado para responder consultas técnicas como:
 
 ## 🏗️ Arquitectura
 
+# Diagrama de IndustrialKnowledgeAgent
+
+```mermaid
 graph TD
     subgraph IndustrialKnowledgeAgent["IndustrialKnowledgeAgent"]
         direction TB
-        User((User)) -->|Query| Orchestrator
+        User((User)) --> Query| Orchestrator
         RAG["RAGAgent (Chroma + PDFs)"] --> Orchestrator
         DB["DatabaseQueryAgent (SQLite)"] --> Orchestrator
 
