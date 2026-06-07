@@ -7,7 +7,14 @@ from pathlib import Path
 import chromadb
 from chromadb.utils import embedding_functions
 
-from mistralai import Mistral
+# Compatibilidad con mistralai 1.x y 2.x
+try:
+    from mistralai import Mistral
+except ImportError:
+    try:
+        from mistralai.client import MistralClient as Mistral
+    except ImportError:
+        raise ImportError("mistralai no está instalado o la versión no es compatible (requiere >=1.2.0,>=2.0.0)")
 
 from config.settings import config
 from utils.text_processor import process_pdf_to_chunks, clean_text
@@ -37,6 +44,17 @@ class RAGAgent:
         
         # Inicializar cliente Mistral
         self.mistral_client = Mistral(api_key=config.mistral.api_key)
+        
+        # Detectar el método chat correcto (compatibilidad 1.x y 2.x)
+        if hasattr(self.mistral_client.chat, 'complete'):
+            self._chat_method = lambda model, messages, **kwargs: \
+                self.mistral_client.chat.complete(model=model, messages=messages, **kwargs)
+        elif hasattr(self.mistral_client.chat, 'completions'):
+            self._chat_method = lambda model, messages, **kwargs: \
+                self.mistral_client.chat.completions.create(model=model, messages=messages, **kwargs)
+        else:
+            self._chat_method = lambda model, messages, **kwargs: \
+                self.mistral_client.chat(model=model, messages=messages, **kwargs)
         
         # Obtener o crear la colección
         self.collection = self._get_or_create_collection()
@@ -183,7 +201,7 @@ class RAGAgent:
             - Incluye referencias a normativas o estándares cuando sea relevante"""
         
         try:
-            response = self.mistral_client.chat.complete(
+            response = self._chat_method(
                 model=config.mistral.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=config.mistral.temperature,

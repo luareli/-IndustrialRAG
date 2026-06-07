@@ -6,7 +6,14 @@ import json
 from typing import Dict, List, Any, Optional
 import sqlite3
 
-from mistralai import Mistral
+# Compatibilidad con mistralai 1.x y 2.x
+try:
+    from mistralai import Mistral
+except ImportError:
+    try:
+        from mistralai.client import MistralClient as Mistral
+    except ImportError:
+        raise ImportError("mistralai no está instalado o la versión no es compatible (requiere >=1.2.0,>=2.0.0)")
 
 from config.settings import config
 from utils.database_utils import (
@@ -36,6 +43,17 @@ class DatabaseQueryAgent:
         """
         self.db_connections = db_connections or {}
         self.mistral_client = Mistral(api_key=config.mistral.api_key)
+        
+        # Detectar el método chat correcto (compatibilidad 1.x y 2.x)
+        if hasattr(self.mistral_client.chat, 'complete'):
+            self._chat_method = lambda model, messages, **kwargs: \
+                self.mistral_client.chat.complete(model=model, messages=messages, **kwargs)
+        elif hasattr(self.mistral_client.chat, 'completions'):
+            self._chat_method = lambda model, messages, **kwargs: \
+                self.mistral_client.chat.completions.create(model=model, messages=messages, **kwargs)
+        else:
+            self._chat_method = lambda model, messages, **kwargs: \
+                self.mistral_client.chat(model=model, messages=messages, **kwargs)
     
     def add_connection(self, db_name: str, db_path: str) -> None:
         """
@@ -104,7 +122,7 @@ class DatabaseQueryAgent:
         Genera SOLAMENTE la consulta SQL, sin explicaciones adicionales:"""
         
         try:
-            response = self.mistral_client.chat.complete(
+            response = self._chat_method(
                 model=config.mistral.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.0,  # Temperatura baja para precisión
