@@ -49,7 +49,7 @@ graph TD
     style User fill:#ffffff,stroke:#6c757d,stroke-width:2px
     style PDFs fill:#fff9c4,stroke:#f57f17,stroke-width:1px
     style DataSource fill:#f3e5f5,stroke:#9c27b0,stroke-width:1px
-
+```
 
 ### Componentes
 
