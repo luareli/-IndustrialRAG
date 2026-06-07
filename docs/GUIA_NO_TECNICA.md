@@ -1,12 +1,12 @@
-# Guía para Usuarios No Técnicos - IndustrialKnowledgeAgent
+# Guía para Usuarios No Técnicos - IndustrialRAG
 
 > **Explicación sencilla del sistema RAG para mantenimiento industrial**
 
 ---
 
-## 📖 ¿Qué es IndustrialKnowledgeAgent?
+## 📖 ¿Qué es IndustrialRAG?
 
-**IndustrialKnowledgeAgent** es un **asistente inteligente** que ayuda a encontrar información sobre mantenimiento industrial de manera rápida y fácil.
+**IndustrialRAG** es un **asistente inteligente** que ayuda a encontrar información sobre mantenimiento industrial de manera rápida y fácil.
 
 ### 🎯 ¿Para qué sirve?
 
@@ -363,7 +363,7 @@ El sistema es **seguro por diseño**:
 
 ## 📌 Resumen Ejecutivo
 
-> **IndustrialKnowledgeAgent** es un asistente inteligente que **encuentra información técnica de manera rápida y precisa**, combinando:
+> **IndustrialRAG** es un asistente inteligente que **encuentra información técnica de manera rápida y precisa**, combinando:
 > - **Tus documentos** (manuales, guías, normativas)
 > - **Tus registros** (historial, mantenimiento, especificaciones)
 > - **Inteligencia artificial** para entender y generar respuestas

@@ -1,4 +1,4 @@
-# Seguridad - IndustrialKnowledgeAgent
+# Seguridad - IndustrialRAG
 
 > Medidas de seguridad implementadas
 

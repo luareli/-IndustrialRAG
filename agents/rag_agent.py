@@ -9,8 +9,8 @@ from chromadb.utils import embedding_functions
 
 from mistralai import Mistral
 
-from IndustrialRAG.config.settings import config
-from IndustrialRAG.utils.text_processor import process_pdf_to_chunks, clean_text
+from config.settings import config
+from utils.text_processor import process_pdf_to_chunks, clean_text
 
 
 logger = logging.getLogger(__name__)
@@ -183,7 +183,7 @@ class RAGAgent:
             - Incluye referencias a normativas o estándares cuando sea relevante"""
         
         try:
-            response = self.mistral_client.chat(
+            response = self.mistral_client.chat.complete(
                 model=config.mistral.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=config.mistral.temperature,

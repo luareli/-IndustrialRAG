@@ -2,10 +2,10 @@
 # =========================================
 
 # LLM Client
-mistralai>=1.5.1
+mistralai>=2.0.0
 
 # Vector Database
-chromadb==0.5.0
+chromadb>=1.5.0
 
 # Embeddings
 sentence-transformers>=2.2.2
@@ -13,8 +13,7 @@ sentence-transformers>=2.2.2
 # PDF Processing
 pypdf==4.0.0
 
-# Database
-sqlite3>=3.0
+# Database (SQLite3 is included in Python standard library)
 
 # Data Processing
 pandas>=2.0.0
@@ -26,10 +25,13 @@ gdown>=4.7.1
 tqdm>=4.66.0
 
 # For creating sample PDFs (optional)
-fpdf2>=2.7.7
+fpdf2>=2.7.8
 
 # Type hints (for development)
 typing-extensions>=4.8.0
+
+# Environment variables
+python-dotenv>=1.0.0
 
 # Logging
 python-json-logger>=2.0.7

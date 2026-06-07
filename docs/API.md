@@ -1,4 +1,4 @@
-# API Reference - IndustrialKnowledgeAgent
+# API Reference - IndustrialRAG
 
 > Referencia de la API de los agentes
 
@@ -8,7 +8,7 @@
 
 ### WorkflowOrchestrator
 
-**Ubicacion:** `IndustrialRAG.agents.orchestrator.WorkflowOrchestrator`
+**Ubicación:** `agents.orchestrator.WorkflowOrchestrator`
 
 **Constructor:**
 ```python
@@ -27,9 +27,12 @@ WorkflowOrchestrator(rag_agent: RAGAgent, db_agent: DatabaseQueryAgent)
 
 **Ejemplo:**
 ```python
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
-orchestrator = initialize_system()
+orchestrator = initialize_system(
+    pdf_dir="./mis_documentos",
+    db_paths={"maintenance": "./data/mantenimiento.db"}
+)
 response = orchestrator.handle_query("Procedimiento para compresor")
 ```
 
@@ -37,26 +40,26 @@ response = orchestrator.handle_query("Procedimiento para compresor")
 
 ### RAGAgent
 
-**Ubicacion:** `IndustrialRAG.agents.rag_agent.RAGAgent`
+**Ubicación:** `agents.rag_agent.RAGAgent`
 
 **Constructor:**
 ```python
 RAGAgent(chroma_client: chromadb.Client, collection_name: str = None)
 ```
 
-**Metodos:**
+**Métodos:**
 
-| Metodo | Descripcion | Parametros | Retorno |
+| Método | Descripción | Parámetros | Retorno |
 |--------|-------------|------------|---------|
 | `load_pdfs(pdf_dir)` | Cargar PDFs | pdf_dir: str | int |
 | `search(query, top_k=3)` | Buscar documentos | query: str, top_k: int | dict |
 | `generate_response(query, context=None)` | Generar respuesta | query: str, context: str | str |
 | `query_with_context(query, top_k=3)` | Buscar + Generar | query: str, top_k: int | str |
-| `get_collection_info()` | Info coleccion | - | dict |
+| `get_collection_info()` | Info colección | - | dict |
 
 **Ejemplo:**
 ```python
-from IndustrialRAG.agents.rag_agent import RAGAgent
+from agents.rag_agent import RAGAgent
 import chromadb
 
 client = chromadb.PersistentClient(path="./chroma_db")
@@ -69,18 +72,18 @@ results = rag_agent.search("mantenimiento compresor", top_k=5)
 
 ### DatabaseQueryAgent
 
-**Ubicacion:** `IndustrialRAG.agents.database_agent.DatabaseQueryAgent`
+**Ubicación:** `agents.database_agent.DatabaseQueryAgent`
 
 **Constructor:**
 ```python
 DatabaseQueryAgent(db_connections: Dict[str, sqlite3.Connection] = None)
 ```
 
-**Metodos:**
+**Métodos:**
 
-| Metodo | Descripcion | Parametros | Retorno |
+| Método | Descripción | Parámetros | Retorno |
 |--------|-------------|------------|---------|
-| `add_connection(db_name, db_path)` | Anadir conexion | db_name: str, db_path: str | None |
+| `add_connection(db_name, db_path)` | Añadir conexión | db_name: str, db_path: str | None |
 | `get_schema(db_name, table_name=None)` | Obtener esquema | db_name: str, table_name: str | str |
 | `generate_sql_query(user_query, db_schema, db_name)` | Generar SQL | user_query: str, db_schema: str, db_name: str | str |
 | `query_database(db_name, sql_query, params=())` | Ejecutar SQL | db_name: str, sql_query: str, params: tuple | List[dict] |
@@ -90,7 +93,7 @@ DatabaseQueryAgent(db_connections: Dict[str, sqlite3.Connection] = None)
 
 **Ejemplo:**
 ```python
-from IndustrialRAG.agents.database_agent import DatabaseQueryAgent
+from agents.database_agent import DatabaseQueryAgent
 
 db_agent = DatabaseQueryAgent()
 db_agent.add_connection("maintenance", "./data/maintenance.db")
@@ -186,7 +189,7 @@ load_config() -> AppConfig
 
 ### Ejemplo 1: Sistema de Tickets
 ```python
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
 orchestrator = initialize_system()
 

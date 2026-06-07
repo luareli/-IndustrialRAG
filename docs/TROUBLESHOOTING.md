@@ -1,4 +1,4 @@
-# Solucion de Problemas - IndustrialKnowledgeAgent
+# Solucion de Problemas - IndustrialRAG
 
 > Problemas comunes y sus soluciones
 
@@ -102,7 +102,7 @@ chmod 755 chroma_db
 **Soluciones:**
 ```python
 # Verificar PDF valido
-from IndustrialRAG.utils.text_processor import extract_pdf_text
+from utils.text_processor import extract_pdf_text
 from pathlib import Path
 
 try:
@@ -341,7 +341,7 @@ conn.close()
 
 **b. Crear tabla faltante:**
 ```python
-from IndustrialRAG.utils.database_utils import initialize_database
+from utils.database_utils import initialize_database
 
 schema = '''
 CREATE TABLE maintenance_logs (
@@ -384,7 +384,7 @@ import os
 os.remove("data/maintenance_db.sqlite")
 
 # Crear nueva con datos de ejemplo
-from IndustrialRAG.main import create_sample_databases
+from main import create_sample_databases
 create_sample_databases()
 ```
 
@@ -400,7 +400,7 @@ create_sample_databases()
 
 **a. Verificar extraccion:**
 ```python
-from IndustrialRAG.utils.text_processor import extract_pdf_text, process_pdf_to_chunks
+from utils.text_processor import extract_pdf_text, process_pdf_to_chunks
 from pathlib import Path
 
 text = extract_pdf_text(Path("documento.pdf"))
@@ -413,7 +413,7 @@ print(f"Chunks generados: {len(chunks)}")
 **b. Probar con otro PDF:**
 ```python
 # Usar PDF de ejemplo
-from IndustrialRAG.main import create_sample_pdf
+from main import create_sample_pdf
 pdf_dir = create_sample_pdf()
 print(f"PDF de ejemplo creado en: {pdf_dir}")
 ```
@@ -434,7 +434,7 @@ ChromaConfig(chunk_size=1500, chunk_overlap=300)
 
 **b. Verificar limpieza de texto:**
 ```python
-from IndustrialRAG.utils.text_processor import clean_text
+from utils.text_processor import clean_text
 
 texto_sucio = "   texto   con   espacios   \x00\x01   "
 texto_limpio = clean_text(texto_sucio)
@@ -452,13 +452,13 @@ print(f"Antes: {len(texto_sucio)}, Despues: {len(texto_limpio)}")
 **Solucion:**
 ```python
 # Forzar recarga de configuracion
-from IndustrialRAG.config.settings import load_config
+from config.settings import load_config
 
 # Recargar config
 config = load_config()
 
 # Reinicializar agentes con nueva config
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 orchestrator = initialize_system()
 ```
 
@@ -482,7 +482,7 @@ ChromaConfig(embedding_model="BAAI/bge-small-en-v1.5")
 ### 1. Verificar estado del sistema
 
 ```python
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
 orchestrator = initialize_system()
 status = orchestrator.get_system_status()
@@ -548,7 +548,7 @@ except Exception as e:
 # Verificar que los PDFs tienen texto
 import os
 from pathlib import Path
-from IndustrialRAG.utils.text_processor import extract_pdf_text
+from utils.text_processor import extract_pdf_text
 
 pdf_dir = "documentos/"
 for pdf_file in Path(pdf_dir).glob("*.pdf"):
@@ -561,7 +561,7 @@ for pdf_file in Path(pdf_dir).glob("*.pdf"):
 
 ```python
 # Crear sistema minimal para pruebas
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
 # Usar solo 1 PDF pequeño
 orchestrator = initialize_system(pdf_dir="pruebas/")

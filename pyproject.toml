@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "IndustrialRAG"
+version = "1.0.0"
+description = "Sistema RAG para Mantenimiento Industrial con Chroma y Mistral AI"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    { name = "IndustrialRAG Team" }
+]
+
+dependencies = [
+    "mistralai>=2.0.0",
+    "chromadb>=1.5.0",
+    "sentence-transformers>=2.2.2",
+    "pypdf>=4.0.0",
+    "pandas>=2.0.0",
+    "gdown>=4.7.1",
+    "tqdm>=4.66.0",
+    "fpdf2>=2.7.7",
+    "typing-extensions>=4.8.0",
+    "python-json-logger>=2.0.7",
+    "python-dotenv>=1.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["IndustrialRAG"]

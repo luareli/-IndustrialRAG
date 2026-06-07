@@ -13,10 +13,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import chromadb
 
-from IndustrialRAG.config.settings import config, load_config
-from IndustrialRAG.agents.rag_agent import RAGAgent
-from IndustrialRAG.agents.database_agent import DatabaseQueryAgent
-from IndustrialRAG.agents.orchestrator import WorkflowOrchestrator
+from config.settings import config, load_config
+from agents.rag_agent import RAGAgent
+from agents.database_agent import DatabaseQueryAgent
+from agents.orchestrator import WorkflowOrchestrator
 
 
 # Configurar logging
@@ -83,7 +83,7 @@ def initialize_system(pdf_dir: str = None, db_paths: dict = None) -> WorkflowOrc
 
 def create_sample_databases():
     """Crea bases de datos de ejemplo para pruebas"""
-    from IndustrialRAG.utils.database_utils import initialize_database
+    from utils.database_utils import initialize_database
     
     # Base de datos de mantenimiento
     maintenance_schema = """
@@ -234,8 +234,14 @@ def create_sample_pdf():
     return "data/pdfs"
 
 
-def main():
-    """Función principal de ejecución"""
+def main(pdf_dir: str = None, db_paths: dict = None, run_examples: bool = True):
+    """Función principal de ejecución
+    
+    Args:
+        pdf_dir: Directorio con PDFs para indexar (si None, usa ejemplos)
+        db_paths: Diccionario de rutas a bases de datos (si None, usa ejemplos)
+        run_examples: Si True, ejecuta consultas de ejemplo
+    """
     logger.info("IndustrialKnowledgeAgent - Inicio")
     
     # Verificar API key
@@ -244,54 +250,95 @@ def main():
         logger.error("Puedes obtener una API key en: https://console.mistral.ai/api-keys/")
         sys.exit(1)
     
-    # Crear datos de ejemplo si no existen
-    create_sample_databases()
-    pdf_dir = create_sample_pdf()
+    # Usar datos proporcionados o crear ejemplos
+    if pdf_dir is None or db_paths is None:
+        logger.info("No se proporcionaron rutas, usando datos de ejemplo...")
+        create_sample_databases()
+        pdf_dir = create_sample_pdf()
+        db_paths = {
+            "maintenance": "data/maintenance_db.sqlite",
+            "specs": "data/technical_specifications_db.sqlite"
+        }
     
     # Inicializar sistema
-    db_paths = {
-        "maintenance": "data/maintenance_db.sqlite",
-        "specs": "data/technical_specifications_db.sqlite"
-    }
-    
     orchestrator = initialize_system(pdf_dir, db_paths)
     
     # Mostrar estado del sistema
     status = orchestrator.get_system_status()
     logger.info(f"Estado del sistema: {json.dumps(status, indent=2)}")
     
-    # Ejemplos de consultas
-    logger.info("\n" + "="*50)
-    logger.info("EJEMPLOS DE CONSULTAS")
-    logger.info("="*50)
+    # Ejecutar ejemplos solo si se solicita
+    if run_examples:
+        logger.info("\n" + "="*50)
+        logger.info("EJEMPLOS DE CONSULTAS")
+        logger.info("="*50)
+        
+        examples = [
+            "¿Cuál es el procedimiento de mantenimiento para el compresor de aire?",
+            "Muestra el historial de mantenimiento del equipo EQ-001",
+            "¿Cuáles son las especificaciones técnicas del generador GEN-100KW?",
+            "¿Qué protocolos de seguridad debo seguir para mantener una bomba de agua?"
+        ]
+        
+        for i, query in enumerate(examples, 1):
+            logger.info(f"\n[{i}] Consulta: {query}")
+            try:
+                response = orchestrator.handle_query(query)
+                logger.info(f"Respuesta:\n{response}\n")
+            except Exception as e:
+                logger.error(f"Error en consulta {i}: {str(e)}")
+        
+        logger.info("\n" + "="*50)
+        logger.info("Ejecución completada. El sistema está listo para usar.")
+        logger.info("="*50)
+    else:
+        logger.info("Sistema inicializado en modo producción. Listo para consultas.")
     
-    examples = [
-        "¿Cuál es el procedimiento de mantenimiento para el compresor de aire?",
-        "Muestra el historial de mantenimiento del equipo EQ-001",
-        "¿Cuáles son las especificaciones técnicas del generador GEN-100KW?",
-        "¿Qué protocolos de seguridad debo seguir para mantener una bomba de agua?"
-    ]
-    
-    for i, query in enumerate(examples, 1):
-        logger.info(f"\n[{i}] Consulta: {query}")
-        try:
-            response = orchestrator.handle_query(query)
-            logger.info(f"Respuesta:\n{response}\n")
-        except Exception as e:
-            logger.error(f"Error en consulta {i}: {str(e)}")
-    
-    logger.info("\n" + "="*50)
-    logger.info("Ejecución completada. El sistema está listo para usar.")
-    logger.info("="*50)
+    return orchestrator
 
 
 if __name__ == "__main__":
-    # Instalar dependencias adicionales si es necesario
-    try:
-        import fpdf
-    except ImportError:
-        logger.warning("fpdf no está instalado. No se creará PDF de ejemplo.")
-        logger.warning("Instalar con: pip install fpdf2")
+    import argparse
     
-    import json
-    main()
+    # Configurar argument parser
+    parser = argparse.ArgumentParser(description="IndustrialKnowledgeAgent - Sistema RAG para Mantenimiento Industrial")
+    parser.add_argument("--pdf-dir", type=str, help="Directorio con PDFs para indexar")
+    parser.add_argument("--db-path", action="append", nargs=2, metavar=("NAME", "PATH"), 
+                        help="Base de datos SQLite: nombre y ruta (ej: maintenance data/maintenance.db)")
+    parser.add_argument("--no-examples", action="store_true", help="No ejecutar consultas de ejemplo")
+    parser.add_argument("--interactive", action="store_true", help="Modo interactivo para producción")
+    
+    args = parser.parse_args()
+    
+    # Procesar argumentos de bases de datos
+    db_paths = {}
+    if args.db_path:
+        for name, path in args.db_path:
+            db_paths[name] = path
+    
+    # Inicializar sistema
+    orchestrator = main(
+        pdf_dir=args.pdf_dir,
+        db_paths=db_paths if db_paths else None,
+        run_examples=not args.no_examples
+    )
+    
+    # Modo interactivo para producción
+    if args.interactive:
+        logger.info("\n" + "="*50)
+        logger.info("MODO INTERACTIVO (Ctrl+C para salir)")
+        logger.info("="*50)
+        while True:
+            try:
+                query = input("\nConsulta: ")
+                if not query.strip():
+                    continue
+                response = orchestrator.handle_query(query)
+                print("\n" + "-"*50)
+                print(response)
+                print("-"*50)
+            except KeyboardInterrupt:
+                logger.info("\nSaliendo...")
+                break
+            except Exception as e:
+                logger.error(f"Error: {str(e)}")

@@ -7,9 +7,9 @@ from typing import Dict, List, Any, Optional
 
 from mistralai import Mistral
 
-from IndustrialRAG.config.settings import config
-from IndustrialRAG.agents.rag_agent import RAGAgent
-from IndustrialRAG.agents.database_agent import DatabaseQueryAgent
+from config.settings import config
+from agents.rag_agent import RAGAgent
+from agents.database_agent import DatabaseQueryAgent
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class WorkflowOrchestrator:
         [Recomendaciones]"""
         
         try:
-            response = self.mistral_client.chat(
+            response = self.mistral_client.chat.complete(
                 model=config.mistral.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=config.mistral.temperature,

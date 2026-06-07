@@ -1,4 +1,4 @@
-# Arquitectura Tecnica - IndustrialKnowledgeAgent
+# Arquitectura Tecnica - IndustrialRAG
 
 > Detalles de implementacion del sistema RAG
 

@@ -8,8 +8,8 @@ import sqlite3
 
 from mistralai import Mistral
 
-from IndustrialRAG.config.settings import config
-from IndustrialRAG.utils.database_utils import (
+from config.settings import config
+from utils.database_utils import (
     create_db_connection,
     get_table_schema,
     get_all_table_schemas,
@@ -104,7 +104,7 @@ class DatabaseQueryAgent:
         Genera SOLAMENTE la consulta SQL, sin explicaciones adicionales:"""
         
         try:
-            response = self.mistral_client.chat(
+            response = self.mistral_client.chat.complete(
                 model=config.mistral.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.0,  # Temperatura baja para precisión
@@ -112,6 +112,9 @@ class DatabaseQueryAgent:
             )
             
             sql_query = response.choices[0].message.content.strip()
+            
+            # Limpiar formato de código (backticks, markdown, etc.)
+            sql_query = sql_query.replace("```sql", "").replace("```", "").strip()
             
             # Validación de seguridad
             if "NO_PUEDO_GENERAR_CONSULTA_SEGURA" in sql_query:

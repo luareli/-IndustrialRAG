@@ -1,4 +1,4 @@
-# Guía de Instalación - IndustrialKnowledgeAgent
+# Guía de Instalación - IndustrialRAG
 
 > Instrucciones detalladas para instalar y configurar el sistema
 
@@ -46,13 +46,14 @@ python3 --version
 # Navegar al directorio de trabajo
 cd /ruta/a/tu/proyecto
 
-# Clonar el repositorio (si está en GitHub)
-git clone https://github.com/tu-usuario/IndustrialKnowledgeAgent.git
-cd IndustrialKnowledgeAgent
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/IndustrialRAG.git
+cd IndustrialRAG
+cd IndustrialRAG
 
 # Si estás trabajando con archivos locales, simplemente copialos
-tar -xzvf IndustrialKnowledgeAgent.tar.gz
-cd IndustrialKnowledgeAgent
+tar -xzvf IndustrialRAG.tar.gz
+cd IndustrialRAG
 ```
 
 #### 2. Crear entorno virtual
@@ -95,11 +96,7 @@ pip install -r requirements.txt --verbose
 
 #### 4. Instalar dependencias de embeddings
 
-El modelo `all-MiniLM-L6-v2` requiere el paquete `sentence-transformers`:
-
-```bash
-pip install sentence-transformers
-```
+El modelo `all-MiniLM-L6-v2` se instalará automáticamente con las dependencias.
 
 **Nota:** La primera vez que se usa, se descargará automáticamente el modelo (aproximadamente 90MB).
 
@@ -319,7 +316,7 @@ chroma_client = chromadb.Client()  # In-memory
 
 ```bash
 python3 -c "
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 import os
 
 # Configurar API key
@@ -384,7 +381,7 @@ except Exception as e:
 El sistema puede inicializar bases de datos SQLite automáticamente:
 
 ```python
-from IndustrialRAG.utils.database_utils import initialize_database
+from utils.database_utils import initialize_database
 
 # Esquema de ejemplo
 schema = '''
@@ -402,7 +399,7 @@ conn = initialize_database('mi_database.db', schema)
 
 ```python
 import sqlite3
-from IndustrialRAG.agents.database_agent import DatabaseQueryAgent
+from agents.database_agent import DatabaseQueryAgent
 
 # Conectar a base de datos existente
 conn = sqlite3.connect('tu_base_de_datos.db')
@@ -508,6 +505,6 @@ Si encuentras problemas no cubiertos en esta guía:
 
 ---
 
-**¡Listo!** Ahora puedes usar el IndustrialKnowledgeAgent.
+**¡Listo!** Ahora puedes usar el IndustrialRAG.
 
 Siguiente paso: [Guía de Uso](USO.md)

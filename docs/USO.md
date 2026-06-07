@@ -1,4 +1,4 @@
-# Guía de Uso - IndustrialKnowledgeAgent
+# Guía de Uso - IndustrialRAG
 
 > Cómo usar el sistema en producción y desarrollo
 
@@ -6,13 +6,11 @@
 
 ## 🚀 Uso Básico
 
-### Inicio rápido
-
-El método más sencillo para empezar:
+### Inicio rápido (modo desarrollo con ejemplos)
 
 ```bash
 # Ejecutar el script principal
-python3 IndustrialRAG/main.py
+python3 main.py
 ```
 
 Esto:
@@ -21,6 +19,25 @@ Esto:
 3. Indexa los documentos
 4. Ejecuta consultas de demostración
 
+### Modo Producción
+
+Para usar con **tus propios datos** sin ejemplos:
+
+```bash
+python3 main.py \
+  --pdf-dir ./mis_documentos \
+  --db-path maintenance ./data/mantenimiento.db \
+  --db-path specs ./data/especificaciones.db \
+  --no-examples \
+  --interactive
+```
+
+**Opciones:**
+- `--pdf-dir`: Directorio con tus PDFs
+- `--db-path`: Base de datos (nombre ruta), se puede repetir
+- `--no-examples`: Saltar consultas de demostración
+- `--interactive`: Modo interactivo para consultas
+
 ---
 
 ## 📖 Casos de Uso Comunes
@@ -28,10 +45,13 @@ Esto:
 ### 1. Consultar documentación técnica
 
 ```python
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
-# Inicializar
-orchestrator = initialize_system(pdf_dir="docs/tecnicos")
+# Inicializar con tus datos
+orchestrator = initialize_system(
+    pdf_dir="./mis_documentos",
+    db_paths={"maintenance": "./data/mantenimiento.db"}
+)
 
 # Consultar procedimientos
 response = orchestrator.handle_query(
@@ -57,9 +77,10 @@ Normativa aplicable: ISO 8573-1 para calidad de aire comprimido.
 ### 2. Consultar historial de mantenimiento
 
 ```python
-# Con base de datos cargada
-response = orchestrator.handle_query(
-    "Muestra el historial de mantenimiento del equipo EQ-001"
+# Consulta con tus bases de datos
+response = orchestrator.handle_database_query(
+    "Muestra el historial de mantenimiento del equipo EQ-001",
+    db_name="maintenance"
 )
 print(response)
 ```
@@ -98,6 +119,14 @@ response = orchestrator.handle_query(
     "¿Cuáles son las especificaciones técnicas del generador GEN-100KW?"
 )
 print(response)
+
+# O consulta solo una base de datos específica
+response = orchestrator.handle_database_query(
+    "¿Cuáles son las especificaciones del generador GEN-100KW?",
+    db_name="specs"
+)
+print(response)
+```
 ```
 
 ### 4. Consultas combinadas (documentación + base de datos)
@@ -148,7 +177,7 @@ response = orchestrator.handle_query(
 ### Personalizar la configuración
 
 ```python
-from IndustrialRAG.config.settings import AppConfig, ChromaConfig, MistralConfig
+from config.settings import AppConfig, ChromaConfig, MistralConfig
 
 # Configuración personalizada
 config = AppConfig(
@@ -171,7 +200,7 @@ config = AppConfig(
 
 ```python
 import chromadb
-from IndustrialRAG.agents.rag_agent import RAGAgent
+from agents.rag_agent import RAGAgent
 
 # Cliente Chroma
 client = chromadb.PersistentClient(path="./chroma_db")
@@ -188,7 +217,7 @@ rag_agent_normativas.load_pdfs("docs/normativas/")
 ### Conectar múltiples bases de datos
 
 ```python
-from IndustrialRAG.agents.database_agent import DatabaseQueryAgent
+from agents.database_agent import DatabaseQueryAgent
 
 db_agent = DatabaseQueryAgent()
 
@@ -205,7 +234,7 @@ db_agent.add_connection("inventario", "data/inventory.db")
 ### Uso como biblioteca
 
 ```python
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
 # Inicializar una vez (al inicio de la aplicación)
 orchestrator = initialize_system(
@@ -232,7 +261,7 @@ def obtener_historial(equipo_id):
 ```python
 # app.py
 from fastapi import FastAPI, HTTPException
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 import os
 
 app = FastAPI()
@@ -278,10 +307,10 @@ def database_query(db_name: str, q: str):
 ```python
 # cli.py
 import cmd
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
 class IndustrialRAGCLI(cmd.Cmd):
-    intro = "IndustrialKnowledgeAgent CLI. Escribe 'help' para lista de comandos. 'exit' para salir."
+    intro = "IndustrialRAG CLI. Escribe 'help' para lista de comandos. 'exit' para salir."
     prompt = "RAG> "
     
     def __init__(self):
@@ -338,7 +367,7 @@ orchestrator.rag_agent.load_pdfs("/ruta/a/nuevos/pdf")
 
 ```python
 import chromadb
-from IndustrialRAG.agents.rag_agent import RAGAgent
+from agents.rag_agent import RAGAgent
 
 # Borrar colección antigua
 client = chromadb.PersistentClient(path="./chroma_db")
@@ -364,7 +393,7 @@ print(f"Bases de datos conectadas: {info['db_agent']['connections']}")
 ### Crear nueva base de datos
 
 ```python
-from IndustrialRAG.utils.database_utils import initialize_database
+from utils.database_utils import initialize_database
 
 schema = '''
 CREATE TABLE nuevos_equipos (
@@ -532,7 +561,7 @@ sqlite3 data/maintenance.db "REINDEX;"
 ### Ejemplo 1: Sistema de tickets de mantenimiento
 
 ```python
-from IndustrialRAG.main import initialize_system
+from main import initialize_system
 
 orchestrator = initialize_system()
 

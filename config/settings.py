@@ -4,7 +4,11 @@ Configuración centralizada del IndustrialKnowledgeAgent con Chroma
 import os
 from pathlib import Path
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 
 @dataclass
@@ -37,9 +41,9 @@ class DatabaseConfig:
 @dataclass
 class AppConfig:
     """Configuración principal de la aplicación"""
-    chroma: ChromaConfig = ChromaConfig()
-    mistral: MistralConfig = MistralConfig()
-    database: DatabaseConfig = DatabaseConfig()
+    chroma: ChromaConfig = field(default_factory=ChromaConfig)
+    mistral: MistralConfig = field(default_factory=MistralConfig)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig)
 
 
 def load_config() -> AppConfig:

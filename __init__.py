@@ -14,7 +14,7 @@ Estructura:
 - data/: Datos de ejemplo (PDFs y bases de datos)
 
 Uso:
-    from IndustrialRAG.main import initialize_system
+    from main import initialize_system
     
     orchestrator = initialize_system(
         pdf_dir="path/to/pdfs",
@@ -29,10 +29,10 @@ __author__ = "Industrial RAG Team"
 __license__ = "MIT"
 
 # Exportar clases principales
-from IndustrialRAG.agents.rag_agent import RAGAgent
-from IndustrialRAG.agents.database_agent import DatabaseQueryAgent
-from IndustrialRAG.agents.orchestrator import WorkflowOrchestrator
-from IndustrialRAG.config.settings import config, load_config
+from agents.rag_agent import RAGAgent
+from agents.database_agent import DatabaseQueryAgent
+from agents.orchestrator import WorkflowOrchestrator
+from config.settings import config, load_config
 
 __all__ = [
     'RAGAgent',
