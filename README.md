@@ -47,6 +47,8 @@ graph TD
     style PDFs fill:#fff9c4,stroke:#f57f17,stroke-width:1px
     style DataSource fill:#f3e5f5,stroke:#9c27b0,stroke-width:1px
 
+
+
 ### Componentes
 
 | Componente | Responsabilidad | Tecnologías |
