@@ -35,9 +35,12 @@ graph TD
         Orchestrator -->|SQL Queries| SQLiteDB[("SQLite DB Structured")]
     end
 
+<<<<<<< HEAD
     PDFs["PDF Files"] -.->|Local| ChromaDB
     DataSource[("SQLite Generator")] -.->|Local| SQLiteDB
 
+=======
+>>>>>>> 48643ad28e8f0b3436f1891225a831ae88055d6b
     style IndustrialKnowledgeAgent fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
     style Orchestrator fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
     style RAG fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
@@ -45,8 +48,11 @@ graph TD
     style ChromaDB fill:#fff3e0,stroke:#ff9800,stroke-width:2px
     style SQLiteDB fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
     style User fill:#ffffff,stroke:#6c757d,stroke-width:2px
+<<<<<<< HEAD
     style PDFs fill:#fff9c4,stroke:#f57f17,stroke-width:1px
     style DataSource fill:#f3e5f5,stroke:#9c27b0,stroke-width:1px
+=======
+>>>>>>> 48643ad28e8f0b3436f1891225a831ae88055d6b
 ```
 
 ### Componentes
