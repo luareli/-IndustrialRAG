@@ -25,20 +25,19 @@ El sistema está diseñado para responder consultas técnicas como:
 
 # Diagrama de IndustrialKnowledgeAgent
 
-```mermaid
 graph TD
     subgraph IndustrialKnowledgeAgent["IndustrialKnowledgeAgent"]
         direction TB
-        User((User)) --> Query| Orchestrator
+        User((User)) --> |Query| Orchestrator
         RAG["RAGAgent (Chroma + PDFs)"] --> Orchestrator
         DB["DatabaseQueryAgent (SQLite)"] --> Orchestrator
 
-        Orchestrator["WorkflowOrchestrator"] -->|Vector Search| ChromaDB[("Chroma DB Vector Store")]
-        Orchestrator -->|SQL Queries| SQLiteDB[("SQLite DB Structured")]
+        Orchestrator["WorkflowOrchestrator"] --> |Vector Search| ChromaDB[("Chroma DB Vector Store")]
+        Orchestrator --> |SQL Queries| SQLiteDB[("SQLite DB Structured")]
     end
 
-    PDFs["PDF Files"] -.->|Local| ChromaDB
-    DataSource[("SQLite Generator")] -.->|Local| SQLiteDB
+    PDFs["PDF Files"] -.-> |Local| ChromaDB
+    DataSource[("SQLite Generator")] -.-> |Local| SQLiteDB
 
     style IndustrialKnowledgeAgent fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
     style Orchestrator fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
