@@ -7,10 +7,10 @@ from typing import Dict, List, Any, Optional
 
 # Compatibilidad con mistralai 1.x y 2.x
 try:
-    from mistralai import Mistral
+    from mistralai.client import Mistral
 except ImportError:
     try:
-        from mistralai.client import MistralClient as Mistral
+        from mistralai import Mistral
     except ImportError:
         raise ImportError("mistralai no está instalado o la versión no es compatible (requiere >=1.2.0,>=2.0.0)")
 
