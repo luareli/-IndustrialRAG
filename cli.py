@@ -12,8 +12,6 @@ from pathlib import Path
 # Añadir el directorio actual al path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from main import initialize_system, create_sample_databases, create_sample_pdf
-
 
 def color_print(text, color=None):
     """Imprime texto con colores (si el terminal lo soporta)"""
@@ -73,6 +71,9 @@ Ejemplos:
 
 def setup_system(pdf_dir=None, db_paths=None):
     """Inicializa el sistema con datos de ejemplo"""
+    # Importar aquí para evitar cargar config al inicio
+    from main import initialize_system, create_sample_databases, create_sample_pdf
+    
     color_print("\n🔧 Configurando sistema...", 'yellow')
     
     # Crear datos de ejemplo si no se proporcionan
@@ -187,6 +188,14 @@ Ejemplos:
     status_parser.add_argument('--db', action='append', nargs=2, metavar=('NAME', 'PATH'))
     
     args = parser.parse_args()
+    
+    # Si solo se pide ayuda, mostrarla sin necesidad de API key
+    if args.command is None and not args.pdf_dir and not args.db and not args.api_key:
+        # Verificar si se pidió ayuda explícitamente
+        import sys as _sys
+        if '--help' in _sys.argv or '-h' in _sys.argv:
+            parser.print_help()
+            sys.exit(0)
     
     # Configurar API key
     api_key = args.api_key or os.environ.get('MISTRAL_API_KEY')
