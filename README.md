@@ -23,36 +23,35 @@ El sistema está diseñado para responder consultas técnicas como:
 
 ## 🏗️ Arquitectura
 
-### Diagrama de IndustrialKnowledgeAgent
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                     IndustrialKnowledgeAgent                                  │
-├───────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  ┌─────────┐       ┌─────────────────┐       ┌─────────────────────────┐      │
-│  │  User   │──────▶│   Orchestrator   │◀──────│  RAGAgent (Chroma + PDFs)│    │
-│  └─────────┘       └─────────────────┘       └─────────────────────────┘      │
-│            ▲               │                                         ▲        │
-│            │               ▼                                         │        │
-│  ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐      │
-│  │  DatabaseQuery   │──────▶│   Orchestrator   │──────▶│  Chroma DB    │      │
-│  │  Agent (SQLite)  │       └─────────────────┘       │  Vector Store  │      │
-│  └─────────────────┘               │                 └─────────────────┘      │
-│                                    │                                          │
-│                                    ▼                                          │
-│                          ┌─────────────────┐                                  │
-│                          │ SQLite DB        │                                 │
-│                          │ Structured       │                                 │
-│                          └─────────────────┘                                  │
-│                                                                               │
-│  ┌─────────────┐       ┌─────────────────┐       ┌─────────────────┐          │
-│  │ PDF Files    │──────▶│   Chroma DB      │                       │          │
-│  └─────────────┘       └─────────────────┘                         │          │
-│                                                                    │          │
-│  ┌─────────────────┐                                               │          │
-│  │ SQLite Generator │───────────────────────────────────────────▶  │          │
-│  └─────────────────┘                                               │          │
-│                                                                    │          │
-└───────────────────────────────────────────────────────────────────────────────┘
+### Diagrama de Arquitectura
+
+```mermaid
+flowchart TD
+    subgraph IndustrialKnowledgeAgent["IndustrialKnowledgeAgent"]
+        User[User]
+        Orchestrator[Orchestrator]
+        RAGAgent[RAGAgent\nChroma + PDFs]
+        DatabaseAgent[DatabaseQueryAgent\nSQLite]
+        ChromaDB[Chroma DB\nVector Store]
+        SQLiteDB[SQLite DB\nStructured Data]
+        PDFFiles[PDF Files]
+        SQLiteGen[SQLite Generator]
+    end
+    
+    User -->|Queries| Orchestrator
+    Orchestrator -->|Documentation Queries| RAGAgent
+    Orchestrator -->|Database Queries| DatabaseAgent
+    RAGAgent -->|Index/Store| ChromaDB
+    DatabaseAgent -->|Query| SQLiteDB
+    PDFFiles -->|Load| ChromaDB
+    SQLiteGen -->|Generate| SQLiteDB
+    
+    style Orchestrator fill:#f9f,stroke:#333
+    style RAGAgent fill:#bbf,stroke:#333
+    style DatabaseAgent fill:#bbf,stroke:#333
+    style ChromaDB fill:#9f9,stroke:#333
+    style SQLiteDB fill:#9f9,stroke:#333
+```
 
 ### Componentes
 
